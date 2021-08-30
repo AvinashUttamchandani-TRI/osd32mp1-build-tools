@@ -12,7 +12,7 @@ env set scan_m4fw 'if test -e ${devtype} ${devnum}:${distro_bootpart} ${m4fw_nam
 
 # Octavo variables
 env set vendor "octavo"
-env set board_name "osd32mp1-red"
+env set board_name "osd32mp1-nscn"
 
 # Update DISTRO command= search in sub-directory and load M4 firmware
 env set boot_prefixes "/${boot_device}${boot_instance}_${board_name}_"

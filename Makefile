@@ -21,7 +21,7 @@ BUILDTOOLS_DIR ?= $(realpath build-tools)
 
 MODE ?= trusted
 #MODE ?= basic
-BOARD_NAME := osd32mp1-red
+BOARD_NAME := osd32mp1-nscn
 KDEFCONFIG ?= osd32_defconfig
 
 ARCH ?= arm

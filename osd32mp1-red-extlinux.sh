@@ -10,7 +10,9 @@ d) DEPLOY_DIR=${OPTARG};;
 esac
 done
 
-BOARD_NAME=osd32mp1-red
+# TODO@avinash - make this a command line flag. Rename script to be board agnostic.
+# BOARD_NAME=osd32mp1-red
+BOARD_NAME=osd32mp1-nscn
 
 export BOOT_DEVICES_LIST=" \
 	mmc0 \
@@ -19,18 +21,18 @@ export BOOT_DEVICES_LIST=" \
 
 UBOOT_SPLASH_IMAGE_mmc0="/splash.bmp"
 UBOOT_EXTLINUX_TIMEOUT_mmc0=20
-UBOOT_EXTLINUX_DEFAULT_LABEL_mmc0=osd32mp1-red-sdcard
-UBOOT_EXTLINUX_LABEL_mmc0=osd32mp1-red-sdcard
+UBOOT_EXTLINUX_DEFAULT_LABEL_mmc0=${BOARD_NAME}-sdcard
+UBOOT_EXTLINUX_LABEL_mmc0=${BOARD_NAME}-sdcard
 UBOOT_EXTLINUX_KERNEL_IMAGE_mmc0="/uImage"
-UBOOT_EXTLINUX_FDTDIR_mmc0="/osd32mp1-red.dtb"
+UBOOT_EXTLINUX_FDTDIR_mmc0="/${BOARD_NAME}.dtb"
 UBOOT_EXTLINUX_ARGS_mmc0="root=/dev/mmcblk1p6 rootwait rw console=ttySTM0,115200 init=/sbin/init firmware_class.path=/lib/firmware/"
 
 UBOOT_SPLASH_IMAGE_mmc1="/splash.bmp"
 UBOOT_EXTLINUX_TIMEOUT_mmc1=20
-UBOOT_EXTLINUX_DEFAULT_LABEL_mmc1=osd32mp1-red-emmc
-UBOOT_EXTLINUX_LABEL_mmc1=osd32mp1-red-emmc
+UBOOT_EXTLINUX_DEFAULT_LABEL_mmc1=${BOARD_NAME}-emmc
+UBOOT_EXTLINUX_LABEL_mmc1=${BOARD_NAME}-emmc
 UBOOT_EXTLINUX_KERNEL_IMAGE_mmc1="/uImage"
-UBOOT_EXTLINUX_FDTDIR_mmc1="/osd32mp1-red.dtb"
+UBOOT_EXTLINUX_FDTDIR_mmc1="${BOARD_NAME}.dtb"
 UBOOT_EXTLINUX_ARGS_mmc1="root=/dev/mmcblk2p4 rootwait rw console=ttySTM0,115200 init=/sbin/init firmware_class.path=/lib/firmware/"
 
 

@@ -7,8 +7,8 @@ DEPLOY_DIR=${ROOT_DIR}/deploy/
 
 # Mode can be: 'basic', 'trusted' or 'optee'
 MODE=trusted
-BOARD_NAME=osd32mp1-red
-KCONFIG=stm32mp_defconfig
+BOARD_NAME=osd32mp1-nscn
+KCONFIG=stm32mp_defconfig #TODO@avinash - figure out if I need to udpate this
 
 #./tools/mkimage -C none -A arm -T script -d boot.src.cmd boot.scr.uimg
 

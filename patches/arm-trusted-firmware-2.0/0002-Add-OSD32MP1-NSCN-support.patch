@@ -125,10 +125,10 @@ index 000000000..d6d90973a
 +#define DDR_DX3DQSTR 0x3DB02000
 diff --git a/fdts/osd32mp1-nscn.dts b/fdts/osd32mp1-nscn.dts
 new file mode 100644
-index 000000000..decef21c0
+index 000000000..a7e68694b
 --- /dev/null
 +++ b/fdts/osd32mp1-nscn.dts
-@@ -0,0 +1,625 @@
+@@ -0,0 +1,626 @@
 +/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
 +/*
 + * Copyright (C) STMicroelectronics 2021 - All Rights Reserved
@@ -152,11 +152,12 @@ index 000000000..decef21c0
 +
 +/* USER CODE BEGIN includes */
 +#include <dt-bindings/power/stm32mp1-power.h>
++#include "osd32mp1-nscn-ddr.dtsi"
 +/* USER CODE END includes */
 +
 +/ {
-+	model = "STMicroelectronics custom STM32CubeMX board";
-+	compatible = "st,stm32mp157c-osd32mp157c-512m-baa_minimalconfig-mx", "st,stm32mp157";
++	model = "TRI's custom stm32mp1 nervous system compute node board";
++	compatible = "tri,osd32mp1-nscn", "st,stm32mp157";
 +
 +	/* USER CODE BEGIN root */
 +  aliases {

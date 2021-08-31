@@ -43,6 +43,12 @@ patch_fsbl:
 			git apply --whitespace=nowarn --directory=bootloader/$(ATF_VERSION) $$file; \
 		fi \
 	done
+
+# Used to move cubemx generated files 
+# TODO@(avinash) this might not be necesssary, seems the make generates this? mv $(FSBL_DIR)/fdts/tf-a-stm32mp157c-osd32mp157c-512m-baa_minimalconfig-mx-trusted.stm32 $(FSBL_DIR)/fdts/tf-a-osd32mp1-nscn.stm32
+cubemx_to_fsbl:
+	cp $(BUILDTOOLS_DIR)/cubemx/osd32mp157C-512M-BAA/CA7/DeviceTree/OSD32MP157C-512M-BAA_MinimalConfig/tf-a/* $(FSBL_DIR)/fdts/ 
+	mv $(FSBL_DIR)/fdts/stm32mp157c-osd32mp157c-512m-baa_minimalconfig-mx.dts $(FSBL_DIR)/fdts/osd32mp1-nscn.dts
 	touch $(KERNEL_DIR)/.scmversion
 
 patch_ssbl:

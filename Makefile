@@ -18,6 +18,7 @@ GCNANO_USR_DIR ?= $(GCNANO_DIR)/gcnano-userland-multi-$(GCNANO_VERSION)-*
 M4PROJECTS_DIR ?= $(realpath STM32CubeMP1)
 DEPLOY_DIR ?= $(PWD)/deploy
 BUILDTOOLS_DIR ?= $(realpath build-tools)
+CUBEMX_DIR=$(BUILDTOOLS_DIR)/cubemx/osd32mp157C-512M-BAA/CA7/DeviceTree/OSD32MP157C-512M-BAA_MinimalConfig
 
 MODE ?= trusted
 #MODE ?= basic
@@ -44,21 +45,29 @@ patch_fsbl:
 		fi \
 	done
 
-# Used to move cubemx generated files 
-# TODO@(avinash) this might not be necesssary, seems the make generates this? mv $(FSBL_DIR)/fdts/tf-a-stm32mp157c-osd32mp157c-512m-baa_minimalconfig-mx-trusted.stm32 $(FSBL_DIR)/fdts/tf-a-osd32mp1-nscn.stm32
+# Used to move cubemx generated files while developing new patches.
 cubemx_to_fsbl:
-	cp $(BUILDTOOLS_DIR)/cubemx/osd32mp157C-512M-BAA/CA7/DeviceTree/OSD32MP157C-512M-BAA_MinimalConfig/tf-a/* $(FSBL_DIR)/fdts/ 
-	mv $(FSBL_DIR)/fdts/stm32mp157c-osd32mp157c-512m-baa_minimalconfig-mx.dts $(FSBL_DIR)/fdts/osd32mp1-nscn.dts
+	cp $(CUBEMX_DIR)/tf-a/stm32mp157c-osd32mp157c-512m-baa_minimalconfig-mx.dts $(FSBL_DIR)/fdts/osd32mp1-nscn.dts
+	cp $(CUBEMX_DIR)/tf-a/stm32mp15-mx.dtsi $(FSBL_DIR)/fdts/
 	touch $(KERNEL_DIR)/.scmversion
 
 patch_ssbl:
 	for file in $(BUILDTOOLS_DIR)/patches/$(UBOOT_VERSION)/*.patch; do \
-		git apply --check --directory=bootloader/$(UBOOT_VERSION) $$file > /dev/null 2>&1; \
+		git apply --check --directory=bootloader/$(UBOOT_VERSION) $$file; \
 		if [ "$$?" -eq "0" ]; then \
 			echo "Apply $$file"; \
 			git apply --whitespace=nowarn --directory=bootloader/$(UBOOT_VERSION) $$file; \
 		fi \
 	done
+	touch $(KERNEL_DIR)/.scmversion
+
+# Used to move cubemx generated files while developing new patches.
+cubemx_to_ssbl:
+	cp $(CUBEMX_DIR)/u-boot/stm32mp15-mx.dtsi $(SSBL_DIR)/arch/arm/dts/
+	cp $(CUBEMX_DIR)/u-boot/stm32mp157c-osd32mp157c-512m-baa_minimalconfig-mx.dts \
+	 	 $(SSBL_DIR)/arch/arm/dts/osd32mp1-nscn.dts
+	cp $(CUBEMX_DIR)/u-boot/stm32mp157c-osd32mp157c-512m-baa_minimalconfig-mx-u-boot.dtsi \
+	   $(SSBL_DIR)/arch/arm/dts/osd32mp1-nscn-u-boot.dtsi
 	touch $(KERNEL_DIR)/.scmversion
 
 patch_kernel:

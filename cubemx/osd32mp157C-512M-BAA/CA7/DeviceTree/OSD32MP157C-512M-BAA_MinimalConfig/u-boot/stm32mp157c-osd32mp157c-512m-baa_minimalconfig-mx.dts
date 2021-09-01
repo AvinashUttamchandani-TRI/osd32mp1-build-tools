@@ -11,10 +11,9 @@
 /dts-v1/;
 #include <dt-bindings/pinctrl/stm32-pinfunc.h>
 
-#include "stm32mp157.dtsi"
-#include "stm32mp15xc.dtsi"
-#include "stm32mp15xxac-pinctrl.dtsi"
-#include "stm32mp157-m4-srm.dtsi"
+#include "stm32mp157c.dtsi"
+#include "stm32mp157cac-pinctrl.dtsi"
+#include "stm32mp157c-m4-srm.dtsi"
 
 /* USER CODE BEGIN includes */
 #include <dt-bindings/mfd/st,stpmic1.h>
@@ -90,6 +89,30 @@
     stdout-path = "serial0:115200n8";
   };
 
+	sram: sram@10050000 {
+		compatible = "mmio-sram";
+		reg = <0x10050000 0x10000>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges = <0 0x10050000 0x10000>;
+
+		dma_pool: dma_pool@0 {
+			reg = <0x0 0x10000>;
+			pool;
+		};
+	};
+
+	led {
+		compatible = "gpio-leds";
+		led3 {
+			label = "heartbeat";
+			gpios = <&gpioc 0 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "heartbeat";
+			default-state = "off";
+		};
+
+	};
+
   vin: vin {
     compatible = "regulator-fixed";
     regulator-name = "vin";
@@ -104,6 +127,7 @@
 		/* USER CODE BEGIN clocks */
 		/* USER CODE END clocks */
 
+//TODO(avinash) see if this needs to be ifdef'd out.
 #ifndef CONFIG_STM32MP1_TRUSTED
 		clk_lsi: clk-lsi {
 			clock-frequency = <32000>;
@@ -250,12 +274,15 @@
 		};
 	};
 
+// TODO@(avinash) - figure out why this is breaking dtc.
+#ifdef M4_ENABLED
 	m4_fdcan1_pins_mx: m4_fdcan1_mx-0 {
 		pins {
 			pinmux = <STM32_PINMUX('D', 0, RSVD)>, /* FDCAN1_RX */
 					 <STM32_PINMUX('D', 1, RSVD)>; /* FDCAN1_TX */
 		};
 	};
+
 
 	m4_i2c1_pins_mx: m4_i2c1_mx-0 {
 		pins {
@@ -279,6 +306,7 @@
 					 <STM32_PINMUX('H', 7, RSVD)>; /* SPI5_MISO */
 		};
 	};
+#endif // M4_ENABLED
 
 	sdmmc1_pins_mx: sdmmc1_mx-0 {
 		u-boot,dm-pre-reloc;
@@ -739,6 +767,7 @@
 	/* USER CODE END iwdg2 */
 };
 
+#ifdef M4_ENABLED
 &m4_dma2{
 	status = "okay";
 
@@ -781,6 +810,7 @@
 	/* USER CODE BEGIN m4_spi5 */
 	/* USER CODE END m4_spi5 */
 };
+#endif // M4_ENABLED
 
 &mdma1{
 	status = "okay";
@@ -788,7 +818,7 @@
 	/* USER CODE BEGIN mdma1 */
 	/* USER CODE END mdma1 */
 };
-
+#ifdef PWR_REGULATORS //TODO@(avinash) see how critical this is in tf-a.
 &pwr_regulators{
 	status = "okay";
 
@@ -797,6 +827,7 @@
   vdd_3v3_usbfs-supply = <&vdd_usb>;
 	/* USER CODE END pwr_regulators */
 };
+#endif // PWR_REGULATORS
 
 &rcc{
 	u-boot,dm-pre-reloc;
@@ -829,11 +860,20 @@
 	status = "okay";
 
 	/* USER CODE BEGIN sdmmc1 */
+	// This part is from octavo red board.
+  broken-cd;
+	st,neg-edge;
+	bus-width = <4>;
+	vmmc-supply = <&v3v3>;
+
+#ifdef SD_CHIP_DETECT
+	// This was the original CUBE_MX version. Does not work (breaks on cd-gpios).
   cd-gpios = <&gpiob 7 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
   disable-wp;
   st,neg-edge;
   bus-width = <4>;
   vmmc-supply = <&v3v3>;
+#endif // SD_CHIP_DETECT	
 	/* USER CODE END sdmmc1 */
 };
 

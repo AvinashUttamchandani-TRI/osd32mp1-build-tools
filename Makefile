@@ -81,6 +81,10 @@ patch_kernel:
 	cp $(BUILDTOOLS_DIR)/patches/$(KERNEL_VERSION)/osd32_defconfig $(KERNEL_DIR)/arch/arm/configs/
 	touch $(KERNEL_DIR)/.scmversion
 
+cubemx_to_kernel:
+	cp $(CUBEMX_DIR)/kernel/stm32mp157c-osd32mp157c-512m-baa_minimalconfig-mx.dts $(KERNEL_DIR)/arch/arm/boot/dts/osd32mp1-nscn.dts
+#	cp $(CUBEMX_DIR)/kernel/stm32mp157c-m4-srm.dtsi $(KERNEL_DIR)/arch/arm/boot/dts/
+
 setup:
 	mkdir -p $(DEPLOY_DIR)/bootfs
 	cp $(BUILDTOOLS_DIR)/files/flash-tools/generate_tsv.sh $(DEPLOY_DIR)/
@@ -102,6 +106,7 @@ ssbl: setup patch_ssbl
 	$(MAKE) $(FLAGS) -C $(SSBL_DIR) DEVICE_TREE=$(BOARD_NAME) all
 	$(SSBL_DIR)/tools/mkimage -C none -A arm -T script -d $(SSBL_DIR)/boot.scr.cmd $(DEPLOY_DIR)/bootfs/boot.scr.uimg
 	cp $(SSBL_DIR)/u-boot.stm32 $(DEPLOY_DIR)/u-boot-$(BOARD_NAME)-$(MODE).stm32
+
 
 kernel: setup patch_kernel
 	$(MAKE) $(FLAGS) -C $(KERNEL_DIR) $(KDEFCONFIG)

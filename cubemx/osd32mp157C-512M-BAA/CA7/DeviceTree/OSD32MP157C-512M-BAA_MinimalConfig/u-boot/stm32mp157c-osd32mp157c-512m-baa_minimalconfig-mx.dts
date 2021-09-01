@@ -18,6 +18,8 @@
 /* USER CODE BEGIN includes */
 #include <dt-bindings/mfd/st,stpmic1.h>
 #include <dt-bindings/rtc/rtc-stm32.h>
+// #define M4_ENABLED
+
 /* USER CODE END includes */
 
 / {

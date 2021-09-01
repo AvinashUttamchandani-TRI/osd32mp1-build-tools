@@ -14,7 +14,6 @@
 #include <dt-bindings/soc/st,stm32-etzpc.h>
 #include "stm32mp15-mx.dtsi"
 
-// #include "stm32mp15-ddr.dtsi"
 
 /* USER CODE BEGIN includes */
 #include <dt-bindings/power/stm32mp1-power.h>

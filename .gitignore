@@ -1,0 +1,8 @@
+# Device tree ignores.
+*.dtb
+*.stm32
+
+# STM32 CubeMX ignores.
+*.project
+*.mxproject
+*.bak

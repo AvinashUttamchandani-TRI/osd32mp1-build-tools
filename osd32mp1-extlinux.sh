@@ -2,17 +2,15 @@
 
 DEPLOY_DIR=./
 
-while getopts d: option
+while getopts "d:b:" option
 do
 case "${option}"
 in
 d) DEPLOY_DIR=${OPTARG};;
+b) BOARD_NAME=${OPTARG};;
 esac
 done
 
-# TODO@avinash - make this a command line flag. Rename script to be board agnostic.
-# BOARD_NAME=osd32mp1-red
-BOARD_NAME=osd32mp1-nscn
 
 export BOOT_DEVICES_LIST=" \
 	mmc0 \

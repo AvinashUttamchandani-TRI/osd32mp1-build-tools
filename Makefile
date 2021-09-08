@@ -84,6 +84,7 @@ patch_kernel:
 cubemx_to_kernel:
 	cp $(CUBEMX_DIR)/kernel/stm32mp157c-osd32mp157c-512m-baa_minimalconfig-mx.dts $(KERNEL_DIR)/arch/arm/boot/dts/osd32mp1-nscn.dts
 #	cp $(CUBEMX_DIR)/kernel/stm32mp157c-m4-srm.dtsi $(KERNEL_DIR)/arch/arm/boot/dts/
+	touch $(KERNEL_DIR)/.scmversion
 
 setup:
 	mkdir -p $(DEPLOY_DIR)/bootfs
@@ -117,7 +118,7 @@ kernel: setup patch_kernel
 
 bootfs: kernel
 	# Generate extlinux files
-	$(BUILDTOOLS_DIR)/$(BOARD_NAME)-extlinux.sh -d $(DEPLOY_DIR)/bootfs
+	$(BUILDTOOLS_DIR)/osd32mp1-extlinux.sh -d $(DEPLOY_DIR)/bootfs -b ${BOARD_NAME}
 	
 	# Copy boot files
 	cp $(BUILDTOOLS_DIR)/files/bootfs/uboot.env $(DEPLOY_DIR)/bootfs/

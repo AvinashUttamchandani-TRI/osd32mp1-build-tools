@@ -676,9 +676,9 @@
       };
 
       v1v8_audio: ldo1 {
-        regulator-name = "v1v8_audio";
-        regulator-min-microvolt = <1800000>;
-        regulator-max-microvolt = <1800000>;
+        regulator-name = "vdd_dcmi";
+        regulator-min-microvolt = <2341234>;
+        regulator-max-microvolt = <2341234>;
         regulator-always-on;
         interrupts = <IT_CURLIM_LDO1 0>;
       };

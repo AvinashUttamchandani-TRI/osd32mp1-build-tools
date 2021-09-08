@@ -8,8 +8,8 @@ See the main [repo](https://github.com/AvinashUttamchandani-TRI/osd32mp1-debian)
 ## Required
 [*] tf-a compiles
 [*] u-boot compiles
-[ ] kernel compiles
-[ ] sd image generated
+[*] kernel compiles
+[*] sd image generated
 [ ] verify power voltages are controllable
 [ ] uart4/main serial console
 [ ] m4 processor configuration
@@ -18,7 +18,7 @@ See the main [repo](https://github.com/AvinashUttamchandani-TRI/osd32mp1-debian)
   [ ] pwr_regulator
   [ ] sram
   [ ] m4 things
-
+[ ] update gitignore for cubemx things.
 
 ## Nice to Have
 [ ] rename CubeMX files to generate the correct names the first time.

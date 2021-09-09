@@ -130,7 +130,7 @@
 		/* USER CODE END clocks */
 
 //TODO(avinash) see if this needs to be ifdef'd out.
-#ifndef CONFIG_STM32MP1_TRUSTED
+// #ifndef CONFIG_STM32MP1_TRUSTED
 		clk_lsi: clk-lsi {
 			clock-frequency = <32000>;
 		};
@@ -146,7 +146,7 @@
 		clk_hse: clk-hse {
 			clock-frequency = <24000000>;
 		};
-#endif	/*CONFIG_STM32MP1_TRUSTED*/
+// #endif	/*CONFIG_STM32MP1_TRUSTED*/
 	};
 
 }; /*root*/
@@ -894,6 +894,7 @@
 	status = "okay";
 
 	/* USER CODE BEGIN uart4 */
+	//TODO(avinash) not in reference dts.
   /delete-property/dmas;
   /delete-property/dma-names;
 	/* USER CODE END uart4 */

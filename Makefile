@@ -18,6 +18,7 @@ GCNANO_USR_DIR ?= $(GCNANO_DIR)/gcnano-userland-multi-$(GCNANO_VERSION)-*
 M4PROJECTS_DIR ?= $(realpath STM32CubeMP1)
 DEPLOY_DIR ?= $(PWD)/deploy
 BUILDTOOLS_DIR ?= $(realpath build-tools)
+CUBEMX_DIR=$(BUILDTOOLS_DIR)/cubemx/osd32mp157C-512M-BAA/CA7/DeviceTree/OSD32MP157C-512M-BAA_MinimalConfig
 
 MODE ?= trusted
 #MODE ?= basic
@@ -43,16 +44,30 @@ patch_fsbl:
 			git apply --whitespace=nowarn --directory=bootloader/$(ATF_VERSION) $$file; \
 		fi \
 	done
+
+# Used to move cubemx generated files while developing new patches.
+cubemx_to_fsbl:
+	cp $(CUBEMX_DIR)/tf-a/stm32mp157c-osd32mp157c-512m-baa_minimalconfig-mx.dts $(FSBL_DIR)/fdts/osd32mp1-nscn.dts
+	cp $(CUBEMX_DIR)/tf-a/stm32mp15-mx.dtsi $(FSBL_DIR)/fdts/
 	touch $(KERNEL_DIR)/.scmversion
 
 patch_ssbl:
 	for file in $(BUILDTOOLS_DIR)/patches/$(UBOOT_VERSION)/*.patch; do \
-		git apply --check --directory=bootloader/$(UBOOT_VERSION) $$file > /dev/null 2>&1; \
+		git apply --check --directory=bootloader/$(UBOOT_VERSION) $$file; \
 		if [ "$$?" -eq "0" ]; then \
 			echo "Apply $$file"; \
 			git apply --whitespace=nowarn --directory=bootloader/$(UBOOT_VERSION) $$file; \
 		fi \
 	done
+	touch $(KERNEL_DIR)/.scmversion
+
+# Used to move cubemx generated files while developing new patches.
+cubemx_to_ssbl:
+	cp $(CUBEMX_DIR)/u-boot/stm32mp15-mx.dtsi $(SSBL_DIR)/arch/arm/dts/
+	cp $(CUBEMX_DIR)/u-boot/stm32mp157c-osd32mp157c-512m-baa_minimalconfig-mx.dts \
+	 	 $(SSBL_DIR)/arch/arm/dts/osd32mp1-nscn.dts
+	cp $(CUBEMX_DIR)/u-boot/stm32mp157c-osd32mp157c-512m-baa_minimalconfig-mx-u-boot.dtsi \
+	   $(SSBL_DIR)/arch/arm/dts/osd32mp1-nscn-u-boot.dtsi
 	touch $(KERNEL_DIR)/.scmversion
 
 patch_kernel:
@@ -64,6 +79,11 @@ patch_kernel:
 		fi \
 	done
 	cp $(BUILDTOOLS_DIR)/patches/$(KERNEL_VERSION)/osd32_defconfig $(KERNEL_DIR)/arch/arm/configs/
+	touch $(KERNEL_DIR)/.scmversion
+
+cubemx_to_kernel:
+	cp $(CUBEMX_DIR)/kernel/stm32mp157c-osd32mp157c-512m-baa_minimalconfig-mx.dts $(KERNEL_DIR)/arch/arm/boot/dts/osd32mp1-nscn.dts
+#	cp $(CUBEMX_DIR)/kernel/stm32mp157c-m4-srm.dtsi $(KERNEL_DIR)/arch/arm/boot/dts/
 	touch $(KERNEL_DIR)/.scmversion
 
 setup:
@@ -88,6 +108,7 @@ ssbl: setup patch_ssbl
 	$(SSBL_DIR)/tools/mkimage -C none -A arm -T script -d $(SSBL_DIR)/boot.scr.cmd $(DEPLOY_DIR)/bootfs/boot.scr.uimg
 	cp $(SSBL_DIR)/u-boot.stm32 $(DEPLOY_DIR)/u-boot-$(BOARD_NAME)-$(MODE).stm32
 
+
 kernel: setup patch_kernel
 	$(MAKE) $(FLAGS) -C $(KERNEL_DIR) $(KDEFCONFIG)
 	$(MAKE) $(FLAGS) -C $(KERNEL_DIR) $(BOARD_NAME).dtb
@@ -97,7 +118,7 @@ kernel: setup patch_kernel
 
 bootfs: kernel
 	# Generate extlinux files
-	$(BUILDTOOLS_DIR)/$(BOARD_NAME)-extlinux.sh -d $(DEPLOY_DIR)/bootfs
+	$(BUILDTOOLS_DIR)/osd32mp1-extlinux.sh -d $(DEPLOY_DIR)/bootfs -b ${BOARD_NAME}
 	
 	# Copy boot files
 	cp $(BUILDTOOLS_DIR)/files/bootfs/uboot.env $(DEPLOY_DIR)/bootfs/

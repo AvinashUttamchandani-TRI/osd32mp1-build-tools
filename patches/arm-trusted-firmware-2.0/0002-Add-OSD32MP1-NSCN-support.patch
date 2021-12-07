@@ -143,7 +143,6 @@ index 000000000..a7e68694b
 +#include <dt-bindings/pinctrl/stm32-pinfunc.h>
 +#include <dt-bindings/clock/stm32mp1-clksrc.h>
 +#include <dt-bindings/soc/st,stm32-etzpc.h>
-+#include "stm32mp15-mx.dtsi"
 +
 +#include "stm32mp157.dtsi"
 +#include "stm32mp15xc.dtsi"

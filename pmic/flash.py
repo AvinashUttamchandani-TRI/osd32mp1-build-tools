@@ -19,8 +19,8 @@ def main(url="ftdi://ftdi:232h:FT55S8HU/1"):
     except I2cNackError:
         print("Couldn't connect to pmic i2c port.")
         sys.exit(-1)
-
-    sys.exit(0)
+    
+    
 
 if __name__ == "__main__":
     main()

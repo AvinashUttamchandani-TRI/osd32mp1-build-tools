@@ -35,29 +35,46 @@ Should be ready to program!
   - 1: `RREQ_ENA`: 0 is probably sanest ( rstn requirements)
   - 0: `SWOFF`: set high to start a power down sequence immediately
 
+- 0x20 to 0x23: `BUCKx_MAIN_CR` : `[7:2]: VOUT[5:0], [1] : PREG_MODE (0: high power, 1: low power), [0]: ENA`
+  - 0x21: `BUCK2_MAIN_CR` : `VOUT[5:0] = 6'd30 = 6'b011110`. Total register = `8'b0111_1001`
+
 - 0x24: `REFDDR_MAIN_CR` : `[7:1] rsvd, [0] = VREF_DDR ENA`
 - 0x25 to 0x2A: `LDOx_MAIN_CR` `x \in {1,2,5,6}`
   - `[7] :rsvd, [6:2] : VOUT[4:0], [1]: rsvd, [0]: ena`
-
   - see Table 9. LDO output voltage settings
+- 0x27: `LDO3_MAIN_CR` : `[7]: bypass (0: normal, 1: bypass), [6:2] : VOUT[5:0], [1] : rsvd, [0] : ena`
+- 0x28: `LDO4_MAIN_CR` : 
+  - `[7:5, 1]: rsvd`
+  - `[4] : SRC_VBUS_OTG (0: auto, 1: supply switch is sets to VBUSOTG)`
+  - `[3] : SRC_BOOST (0: auto, supply set to BSTOUT)`
+  - `[2] : SRC_VIN (0: auto, supply set to VIN)` (what we want, but currently leaving it on auto)
+  - `[0] : ENA`
 
 - 0xFC: `NVM_BUCKS_VOUT_SHR` : NVM BUCKs voltage output shadow register
-  -7:6 : BUCK4 VOUT:  { 2'b00 : 1.15 V, 2'b01: 1.2 V, 2'b10: 1.80 V 2'b11: 3.3 V } 
-  -5:4 : BUCK3 VOUT:  { 2'b00 : 1.20 V, 2'b01: 1.8 V, 2'b10: 3.00 V 2'b11: 3.3 V } 
-  -3:2 : BUCK2 VOUT:  { 2'b00 : 1.10 V, 2'b01: 1.2 V, 2'b10: 1.35 V 2'b11: 1.5 V } 
-  -1:0 : BUCK1 VOUT:  { 2'b00 : 1.10 V, 2'b01: 1.2 V, 2'b10: 1.35 V 2'b11: 1.5 V } 
+  -`7:6 : BUCK4 VOUT:  { 2'b00 : 1.15 V, 2'b01: 1.2 V, 2'b10: 1.80 V 2'b11: 3.3 V } `
+  -`5:4 : BUCK3 VOUT:  { 2'b00 : 1.20 V, 2'b01: 1.8 V, 2'b10: 3.00 V 2'b11: 3.3 V } `
+  -`3:2 : BUCK2 VOUT:  { 2'b00 : 1.10 V, 2'b01: 1.2 V, 2'b10: 1.35 V 2'b11: 1.5 V } `
+  -`1:0 : BUCK1 VOUT:  { 2'b00 : 1.10 V, 2'b01: 1.2 V, 2'b10: 1.35 V 2'b11: 1.5 V } `
 
 - 0xFD : `NVM_LDOS_VOUT_SHR1` : NVM BUCKs voltage output shadow register 1
-  - 7: 0: PWR_SW doesn't turn off if boost VOP, 1: it does
-  - 6: reserved
-  - 5:4: LDO3 VOUT: { 2'b00: 1.8V, 2'b01: 2.5V, 2'b10: 3.3V, 2'b11: `VOUT_BUCK2[5:0]/2`}
-  - 3:2: LDO2 VOUT: { 2'b00: 1.8V, 2'b01: 2.5V, 2'b10: 2.9V, 2'b11: 3.3V } 
-  - 1:0: LDO1 VOUT: { 2'b00: 1.8V, 2'b01: 2.5V, 2'b10: 2.9V, 2'b11: 3.3V } 
+  - `7: 0: PWR_SW doesn't turn off if boost VOP, 1: it does`
+  - `6: reserved`
+  - `5:4: LDO3 VOUT: { 2'b00: 1.8V, 2'b01: 2.5V, 2'b10: 3.3V, 2'b11: VOUT_BUCK2[5:0]/2}` #TODO see if this is important? 
+  - `3:2: LDO2 VOUT: { 2'b00: 1.8V, 2'b01: 2.5V, 2'b10: 2.9V, 2'b11: 3.3V } `
+  - `1:0: LDO1 VOUT: { 2'b00: 1.8V, 2'b01: 2.5V, 2'b10: 2.9V, 2'b11: 3.3V } `
 
 - 0xFE : `NVM_LDOS_VOUT_SHR1` : NVM BUCKs voltage output shadow register 1
-  - 7:4: reserved
-  - 3:2: LDO6 VOUT: { 2'b00: 1.0V, 2'b01: 1.2V, 2'b10: 1.8V, 2'b11: 3.3V } 
-  - 1:0: LDO5 VOUT: { 2'b00: 1.8V, 2'b01: 2.5V, 2'b10: 2.9V, 2'b11: 3.3V } 
+  - `7:4: reserved`
+  - `3:2: LDO6 VOUT: { 2'b00: 1.0V, 2'b01: 1.2V, 2'b10: 1.8V, 2'b11: 3.3V } `
+  - `1:0: LDO5 VOUT: { 2'b00: 1.8V, 2'b01: 2.5V, 2'b10: 2.9V, 2'b11: 3.3V } `
+- 0xF8: `NVM_MAIN_CTRL_SHR` : NVM Main Control Shadow Register
+  - `[7:6] VINOK_HYS: {2'b00: 200mV, 2'b01: 300mV, 2'b10: 400mV, 2'b11: 500mV}`
+  - `[5:4] VINOK_THRES: {2'b00: 3.1V, 2'b01: 3.3V, 2'b10: 3.5V, 2'b11: 4.0V}`
+  - `[3] FORCE_LDO4: 0: starts only if vbus detects on, 1: always starts`. # PROBABLY WANT 1
+  - `[2] PKEYLP_OFF: 0: long key press deactivated`
+  - `[1] AUTO_TURN_ON: definitely want 1`
+  - `[0] LOCK_OCP: def want as 0 for now, don't have a way to write LOCK_OCP from the board itself`. 
+  
 - 0xFF : i2c address for pmic, don't mess with it.
 
 # References

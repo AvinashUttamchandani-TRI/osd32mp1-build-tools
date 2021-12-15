@@ -9,10 +9,14 @@ from pyftdi.i2c import I2cController, I2cNackError
 import sys
 import time
 
-# TODO: check that pullups are on the pmic i2c bus
+# Nice to haves:
+#   - Could reboot by writing MAIN_CR[0] (SWOFF) high maybe? Or at least power off to force reboot?
+#   - 
 
 # from pmic_read_reg import pmic_i2c_reg as pmic_register_table
 from pmic_reprogram_nvm import pmic_i2c_write_nvm, NVM_SR, NVM_CR, NVM_PROGRAM
+
+# TODO organize these in a better structure for reading/writing
 pmic_register_table = [
     # Status Registers
     ["TURN_ON_SR",           "r",  "8'b000x_xxxx", 0x01],
@@ -46,6 +50,21 @@ pmic_register_table = [
     ["TRIM_LDO6/4/3",        "rw", "8'b0001_0000", 0xF1],
     ["TRIM_VR1/2_OFFS",      "rw", "8'b0000_0000", 0xF2],
     ["TRIM_VR3/4_OFFS",      "rw", "8'b0001_0001", 0xF3],
+
+    # Buck settings (default values def  wrong, but last bit should be high!!!)
+    ["BUCK1_MAIN_CR",        "rw", "8'bxxxx_xx11", 0x20],
+    ["BUCK2_MAIN_CR",        "rw", "8'bxxxx_xx11", 0x21],
+    ["BUCK3_MAIN_CR",        "rw", "8'bxxxx_xx11", 0x22],
+    ["BUCK4_MAIN_CR",        "rw", "8'bxxxx_xx11", 0x23],
+
+    # LDO settings (default value might be wrong?)
+    ["REFDDR_MAIN_CR",       "rw", "8'b0000_0001", 0x24],
+    ["LDO1_MAIN_CR",         "rw", "8'b0010_0101", 0x25],
+    ["LDO2_MAIN_CR",         "rw", "8'b0010_0101", 0x26],
+    ["LDO5_MAIN_CR",         "rw", "8'b0010_0101", 0x29],
+    ["LDO6_MAIN_CR",         "rw", "8'b0010_0101", 0x2A],
+    ["LDO3_MAIN_CR",         "rw", "8'b0010_0101", 0x27], #bypassable? # CRITICAL - maps to DDR that's not working
+    ["LDO4_MAIN_CR",         "rw", "8'b0010_0101", 0x28], #??? 
     
     # NV Memory
     ["NVM_MAIN_CTRL_SHR",    "rw", "8'b1110_1110", 0xF8],
@@ -56,6 +75,23 @@ pmic_register_table = [
     ["NVM_LDOS_VOUT_SHR1",   "rw", "8'b1000_0000", 0xFD],
     ["NVM_LDOS_VOUT_SHR2",   "rw", "8'b0000_0010", 0xFE],
     ["NVM_I2C_ADDR_SHR",     "rw", "8'b0011_0011", 0xFF]
+]
+
+
+nvm_registers_to_write = [
+    # not technically nvm, see if these persist across reboots
+    ["BUCK2_MAIN_CR",  0x21, 0b01111001], # For DDR voltage
+    ["REFDDR_MAIN_CR", 0x24, 0b00000001], # For DDR REF
+    ["LDO3_MAIN_CR",   0x27, 0b01111101], # For VTTDDR = VOUT2/2 (source/sink)
+    # NV Memory
+    ["NVM_MAIN_CTRL_SHR",    0xF8, 0b11011110], # looks okay, might want to check [2] pkeylkp_off 
+    ["NVM_BUCKS_RANK_SHR",   0xF9, 0b10010010], # assuming fine? 
+    ["NVM_LDOS_RANK_SHR1",   0xFA, 0b11000000], # 
+    ["NVM_LDOS_RANK_SHR2",   0xFB, 0b00000010],
+    ["NVM_BUCKS_VOUT_SHR",   0xFC, 0b11110010],
+    ["NVM_LDOS_VOUT_SHR1",   0xFD, 0b10000000],
+    ["NVM_LDOS_VOUT_SHR2",   0xFE, 0b00000010]
+#    ["NVM_I2C_ADDR_SHR",     0xFF, 0b00110011]     # Do not modify I2C address
 ]
 
 
@@ -92,12 +128,13 @@ def main(url="ftdi://ftdi:232h:FT55S8HU/1", ro = True):
     if vin_ok not in vin_ok_mapping:
         raise(f"Invalid v_in ok value: {vin_ok}")
     
-    for name, addr, value in pmic_i2c_write_nvm:
+    for name, addr, value in nvm_registers_to_write:
         if name == "NVM_MAIN_CTRL_SHR":
             value = vin_ok_mapping[vin_ok]
         port.write([addr, value])
         check_value = port.read_from(addr,1)
         check_value = int(check_value[0])
+        print(f"  {addr} | {name} | {value} ({check_value})")
         if value != check_value:
             incorrect_writes.append((name, addr, value, check_value))
     
@@ -125,4 +162,4 @@ def main(url="ftdi://ftdi:232h:FT55S8HU/1", ro = True):
     sys.exit(0)
 
 if __name__ == "__main__":
-    main(ro=False)
+    main(ro=True)

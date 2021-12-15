@@ -98,6 +98,21 @@ pmic_i2c_reg            = [
     ["TRIM_LDO6/4/3",        "rw", "8'b0001_0000", 0xF1],
     ["TRIM_VR1/2_OFFS",      "rw", "8'b0000_0000", 0xF2],
     ["TRIM_VR3/4_OFFS",      "rw", "8'b0001_0001", 0xF3],
+
+    # Buck settings (default values def  wrong, but last bit should be high!!!)
+    ["BUCK1_MAIN_CR",        "rw", "8'bxxxx_xx11", 0x20],
+    ["BUCK2_MAIN_CR",        "rw", "8'bxxxx_xx11", 0x21],
+    ["BUCK3_MAIN_CR",        "rw", "8'bxxxx_xx11", 0x22],
+    ["BUCK4_MAIN_CR",        "rw", "8'bxxxx_xx11", 0x23],
+
+    # LDO settings (default value might be wrong?)
+    ["REFDDR_MAIN_CR",       "rw", "8'b0000_0001", 0x24],
+    ["LDO1_MAIN_CR",         "rw", "8'b0010_0101", 0x25],
+    ["LDO2_MAIN_CR",         "rw", "8'b0010_0101", 0x26],
+    ["LDO5_MAIN_CR",         "rw", "8'b0010_0101", 0x29],
+    ["LDO6_MAIN_CR",         "rw", "8'b0010_0101", 0x2A],
+    ["LDO3_MAIN_CR",         "rw", "8'b0010_0101", 0x27], #bypassable? # CRITICAL - maps to DDR that's not working
+    ["LDO4_MAIN_CR",         "rw", "8'b0010_0101", 0x28], #??? 
     
     # NV Memory
     ["NVM_MAIN_CTRL_SHR",    "rw", "8'b1110_1110", 0xF8],

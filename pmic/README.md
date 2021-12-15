@@ -26,6 +26,7 @@ Available interfaces:
 Should be ready to program!
 
 # PMIC Registers
+
 ## Critical
 - 0x10: `MAIN_CR`:
   - 4: `OCP_OFF_DBG` , leave as zero
@@ -33,6 +34,12 @@ Should be ready to program!
   - 2: `PWRCTRL_ENA`, enables the pwrctrl pin at all
   - 1: `RREQ_ENA`: 0 is probably sanest ( rstn requirements)
   - 0: `SWOFF`: set high to start a power down sequence immediately
+
+- 0x24: `REFDDR_MAIN_CR` : `[7:1] rsvd, [0] = VREF_DDR ENA`
+- 0x25 to 0x2A: `LDOx_MAIN_CR` `x \in {1,2,5,6}`
+  - `[7] :rsvd, [6:2] : VOUT[4:0], [1]: rsvd, [0]: ena`
+
+  - see Table 9. LDO output voltage settings
 
 - 0xFC: `NVM_BUCKS_VOUT_SHR` : NVM BUCKs voltage output shadow register
   -7:6 : BUCK4 VOUT:  { 2'b00 : 1.15 V, 2'b01: 1.2 V, 2'b10: 1.80 V 2'b11: 3.3 V } 

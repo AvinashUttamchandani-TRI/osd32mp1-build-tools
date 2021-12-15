@@ -79,17 +79,17 @@ pmic_register_table = [
 
 
 nvm_registers_to_write = [
-    # not technically nvm, see if these persist across reboots
-    ["BUCK2_MAIN_CR",  0x21, 0b01111001], # For DDR voltage
-    ["REFDDR_MAIN_CR", 0x24, 0b00000001], # For DDR REF
-    ["LDO3_MAIN_CR",   0x27, 0b01111101], # For VTTDDR = VOUT2/2 (source/sink)
+    # these were good to check , refddr main_cr might still be screwed?
+    # ["BUCK2_MAIN_CR",  0x21, 0b01111001], # For DDR voltage
+    # ["REFDDR_MAIN_CR", 0x24, 0b00000001], # For DDR REF
+    # ["LDO3_MAIN_CR",   0x27, 0b01111101], # For VTTDDR = VOUT2/2 (source/sink)
     # NV Memory
-    ["NVM_MAIN_CTRL_SHR",    0xF8, 0b11011110], # looks okay, might want to check [2] pkeylkp_off 
-    ["NVM_BUCKS_RANK_SHR",   0xF9, 0b10010010], # assuming fine? 
-    ["NVM_LDOS_RANK_SHR1",   0xFA, 0b11000000], # 
+    ["NVM_MAIN_CTRL_SHR",    0xF8, 0b11001110], # was 0b11011110, relaxed v fall ok
+    ["NVM_BUCKS_RANK_SHR",   0xF9, 0b10010110], # was b1001_0010, promoted buck2 to rank 1? 
+    ["NVM_LDOS_RANK_SHR1",   0xFA, 0b11010000], # set ldo3 rank (5:4) to 01
     ["NVM_LDOS_RANK_SHR2",   0xFB, 0b00000010],
-    ["NVM_BUCKS_VOUT_SHR",   0xFC, 0b11110010],
-    ["NVM_LDOS_VOUT_SHR1",   0xFD, 0b10000000],
+    ["NVM_BUCKS_VOUT_SHR",   0xFC, 0b11111010], # was 0b11110010, changed [3:2] to set buck2 (ddr voltage) right
+    ["NVM_LDOS_VOUT_SHR1",   0xFD, 0b10110000], # set [5:4] as 11 to get the VTT DDR ldo running
     ["NVM_LDOS_VOUT_SHR2",   0xFE, 0b00000010]
 #    ["NVM_I2C_ADDR_SHR",     0xFF, 0b00110011]     # Do not modify I2C address
 ]
@@ -162,4 +162,4 @@ def main(url="ftdi://ftdi:232h:FT55S8HU/1", ro = True):
     sys.exit(0)
 
 if __name__ == "__main__":
-    main(ro=True)
+    main(ro=False)
